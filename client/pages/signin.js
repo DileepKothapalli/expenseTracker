@@ -1,12 +1,8 @@
 import { providers, signIn, getSession, csrfToken } from "next-auth/react";
-import { getCsrfToken } from "next-auth/react";
-
-import Head from "next/head";
-import Image from "next/image";
 import { useState } from "react";
-import styles from "../styles/Home.module.css";
 import Router from "next/router";
-import { NextResponse, NextRequest } from "next/server";
+import axios from "axios";
+import { setCookies } from "cookies-next";
 
 import {
   Button,
@@ -24,15 +20,15 @@ import {
   LogoDiv,
   SignupFormDiv,
 } from "../styles/indexElements";
-import Cookies from "js-cookie";
 
-export default function SignIn({ csrfToken }) {
+export default function SignIn() {
   const [login, setLogin] = useState(true);
   const [signupemail, setSignupemail] = useState(false);
   const [signupphone, setSignupphone] = useState(false);
   const [signuppass, setSignuppass] = useState(false);
   const [loginemail, setLoginemail] = useState(false);
   const [loginpass, setLoginpass] = useState(false);
+
   function toggleHandler() {
     setLogin(!login);
   }
@@ -45,28 +41,46 @@ export default function SignIn({ csrfToken }) {
       email: loginemail,
       password: loginpass,
     };
-    const loginApi = await fetch("http://localhost:3000/api/auth", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).catch((error) => {
-      console.error("Error:", error);
-    });
+    const loginApi = await axios
+      .post("http://localhost:8080/login", {
+        email: loginemail,
+        password: loginpass,
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
 
-    let result = await loginApi.json();
-
-    if (result.success && result.token) {
-      Cookies.set("token", result.token);
+    let result = loginApi;
+    if (result.data.status == "ok") {
+      console.log("first");
       Router.push("/");
     } else {
       // window.location.reload();
     }
   }
 
-  function signupHandler() {}
+  async function signupHandler(e) {
+    e.preventDefault();
+
+    const registerApi = await axios
+      .post("http://localhost:8080/register", {
+        email: signupemail,
+        password: signuppass,
+        phone: signupphone,
+      })
+
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    let result = await registerApi;
+    if (result == "ok") {
+      setLogin(!login);
+      console.log("ok");
+    } else {
+      window.location.reload();
+    }
+  }
 
   return (
     <Div>
@@ -114,7 +128,7 @@ export default function SignIn({ csrfToken }) {
           )}
 
           {!login && (
-            <form>
+            <form onSubmit={signupHandler}>
               <SignupFormDiv>
                 <Heading>Sign up</Heading>
                 <InputDiv>
@@ -147,14 +161,10 @@ export default function SignIn({ csrfToken }) {
                       type="password"
                       required
                       onChange={(event) => {
-                        setSignupemail(event.target.value);
+                        setSignuppass(event.target.value);
                       }}
                     />
                   </InputContainer>
-                  {/* <InputContainer>
-                        <Label>Username</Label>
-                        <Input placeholder=" Username" type="password" />
-                      </InputContainer> */}
                 </InputDiv>
                 <ChangeTextDiv>
                   <Button type="submit">Sign up</Button>
@@ -168,11 +178,3 @@ export default function SignIn({ csrfToken }) {
     </Div>
   );
 }
-
-// export async function getServerSideProps(context) {
-//   return {
-//     props: {
-//       csrfToken: await getCsrfToken(context),
-//     },
-//   };
-// }

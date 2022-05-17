@@ -8,16 +8,13 @@ import {
   NavLinks,
   NavLinksDiv,
 } from "./NavbarElements";
-import { setLogout } from "../../middleware/utils";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
   function handleOnClickLogout(e) {
-    setLogout(e);
+    // setLogout(e);
   }
 
-  const { data: session, status } = useSession();
-  const loading = status === "loading";
   return (
     <Div>
       <Nav>
@@ -42,23 +39,20 @@ const Navbar = () => {
               <NavLinks>Settings</NavLinks>
             </Link>
           </NavLinkDiv>
-          {!loading && !session && (
-            <NavLinkDiv>
-              <Link href="/signin">
-                <NavLinks>SignIn</NavLinks>
-              </Link>
-            </NavLinkDiv>
-          )}
 
-          {session && (
-            <NavLinkDiv>
-              <Link href="">
-                <NavLinks onClick={(e) => handleOnClickLogout(e)}>
-                  SignOut
-                </NavLinks>
-              </Link>
-            </NavLinkDiv>
-          )}
+          <NavLinkDiv>
+            <Link href="/signin">
+              <NavLinks>SignIn</NavLinks>
+            </Link>
+          </NavLinkDiv>
+
+          <NavLinkDiv>
+            <Link href="">
+              <NavLinks onClick={(e) => handleOnClickLogout(e)}>
+                SignOut
+              </NavLinks>
+            </Link>
+          </NavLinkDiv>
         </NavLinksDiv>
       </Nav>
     </Div>
