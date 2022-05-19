@@ -7,13 +7,19 @@ import {
   NavLinkDiv,
   NavLinks,
   NavLinksDiv,
+  AddRecord,
+  Icon,
+  AddrecordDiv,
 } from "./NavbarElements";
-import { signIn, signOut, useSession } from "next-auth/react";
-
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
 const Navbar = () => {
-  function handleOnClickLogout(e) {
-    // setLogout(e);
-  }
+  const [isCookie, setisCookie] = useState(null);
+  useEffect(() => {
+    setisCookie(Cookies.get("token"));
+  });
+
+  // const isCookie = Cookies.get("token");
 
   return (
     <Div>
@@ -21,38 +27,28 @@ const Navbar = () => {
         <LogoDiv>
           <a href="/">
             <Logo>Expense-Tracker</Logo>
-          </a>{" "}
+          </a>
         </LogoDiv>
         <NavLinksDiv>
-          <NavLinkDiv>
-            <Link href="/dashboard">
-              <NavLinks>Dashboard</NavLinks>
-            </Link>
-          </NavLinkDiv>
-          <NavLinkDiv>
-            <Link href="/reports">
-              <NavLinks>Reports</NavLinks>
-            </Link>
-          </NavLinkDiv>
-          <NavLinkDiv>
-            <Link href="/settings">
-              <NavLinks>Settings</NavLinks>
-            </Link>
-          </NavLinkDiv>
+          {!isCookie && (
+            <NavLinkDiv marginRight="140px">
+              <Link href="/signin">
+                <NavLinks>SignIn</NavLinks>
+              </Link>
+            </NavLinkDiv>
+          )}
 
-          <NavLinkDiv>
-            <Link href="/signin">
-              <NavLinks>SignIn</NavLinks>
-            </Link>
-          </NavLinkDiv>
-
-          <NavLinkDiv>
-            <Link href="">
-              <NavLinks onClick={(e) => handleOnClickLogout(e)}>
-                SignOut
-              </NavLinks>
-            </Link>
-          </NavLinkDiv>
+          {isCookie && (
+            <NavLinkDiv marginRight="40px">
+              <Link href="/">
+                <AddrecordDiv>
+                  <Icon src="/favicon/add.png" />
+                  <AddRecord>Add Record</AddRecord>
+                </AddrecordDiv>
+              </Link>
+            </NavLinkDiv>
+          )}
+          {isCookie && <NavLinkDiv marginRight="45px">Hi Dileep</NavLinkDiv>}
         </NavLinksDiv>
       </Nav>
     </Div>

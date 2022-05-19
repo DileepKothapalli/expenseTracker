@@ -3,12 +3,19 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { useSession } from "next-auth/react";
 import Spend from "../components/Spend";
-
+import Sidebar from "../components/SideBar";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { Div } from "../styles/indexElements";
 export default function Home() {
+  const [isCookie, setisCookie] = useState(null);
+  useEffect(() => {
+    setisCookie(Cookies.get("token"));
+  });
   return (
-    <div className={styles.container}>
-      <h3>user.email</h3>
-      <Spend />
-    </div>
+    <Div>
+      <Sidebar />
+      {isCookie && <Spend />}
+    </Div>
   );
 }

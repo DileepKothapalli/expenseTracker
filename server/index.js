@@ -2,13 +2,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 const app = express();
 const apiPort = process.env.PORT || 8080;
 const db = require("./config/db.config");
+const KEY = "`[-&pn/1a?)`4'c1k:-{k>/Y#A1R.S^07rm3HOMGm'!<hAIlN^!qFexY36Q4LTV";
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
@@ -19,7 +19,6 @@ app.post("/login", (req, res) => {
   email = req.body.email;
   password = req.body.password;
 
-  console.log(password);
   db.query(
     `SELECT * FROM USERS WHERE email = "${email}"`,
     function (err, result, fields) {
@@ -57,24 +56,18 @@ app.post("/login", (req, res) => {
   );
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   email = req.body.email;
   password = req.body.password;
+  const salt = await bcrypt.genSalt(10);
+  password = await bcrypt.hash(password, salt);
   phone = req.body.phone;
-  console.log(email);
   var hashedpass = "";
-  bcrypt.genSalt(10, function (err, salt) {
-    bcrypt.hash(password, salt, function (err, hash) {
-      hashedpass = hash;
-      console.log(hashedpass);
-    });
-  });
 
-  var sql = `INSERT INTO USERS ( email,password, phone_number  , created_at) VALUES ("${email}", "${hashedpass}", "${phone}", NOW())`;
+  var sql = `INSERT INTO USERS ( email,password, phone_number  , created_at) VALUES ("${email}", "${password}", "${phone}", NOW())`;
   db.query(sql, function (err, result) {
     if (err) console.error(err);
     console.log("record inserted");
-    console.log(first);
     res.send({ status: "ok", error: "User Not Found" });
   });
 });

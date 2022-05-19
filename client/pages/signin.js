@@ -2,8 +2,7 @@ import { providers, signIn, getSession, csrfToken } from "next-auth/react";
 import { useState } from "react";
 import Router from "next/router";
 import axios from "axios";
-import { setCookies } from "cookies-next";
-
+import Cookies from "js-cookie";
 import {
   Button,
   ChangeText,
@@ -19,7 +18,7 @@ import {
   LoginFormDiv,
   LogoDiv,
   SignupFormDiv,
-} from "../styles/indexElements";
+} from "../styles/signinElements";
 
 export default function SignIn() {
   const [login, setLogin] = useState(true);
@@ -51,11 +50,13 @@ export default function SignIn() {
       });
 
     let result = loginApi;
-    if (result.data.status == "ok") {
+    console.log(result);
+    if (result.data.success) {
       console.log("first");
+      Cookies.set("token", result.data.token);
       Router.push("/");
     } else {
-      // window.location.reload();
+      window.location.reload();
     }
   }
 
