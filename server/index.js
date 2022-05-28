@@ -20,7 +20,7 @@ app.post("/login", (req, res) => {
   password = req.body.password;
 
   db.query(
-    `SELECT * FROM USERS WHERE email = "${email}"`,
+    `SELECT * FROM users WHERE email = "${email}"`,
     function (err, result, fields) {
       valid = false;
       if (result.length != 0) {
@@ -39,7 +39,8 @@ app.post("/login", (req, res) => {
               (err, token) => {
                 res.status(200).json({
                   success: true,
-                  token: "Bearer" + token,
+                  token: token,
+                  email: email,
                 });
               }
             );
@@ -50,7 +51,7 @@ app.post("/login", (req, res) => {
           }
         });
       } else {
-        console.log(result);
+        res.status(400).json({ status: "error", error: "Password incorrect" });
       }
     }
   );
@@ -62,9 +63,23 @@ app.post("/register", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   password = await bcrypt.hash(password, salt);
   phone = req.body.phone;
-  var hashedpass = "";
 
-  var sql = `INSERT INTO USERS ( email,password, phone_number  , created_at) VALUES ("${email}", "${password}", "${phone}", NOW())`;
+  var sql = `INSERT INTO users ( email,password, phone_number  , created_at,updated_at) VALUES ("${email}", "${password}", "${phone}", NOW(),NOW())`;
+  db.query(sql, function (err, result) {
+    if (err) console.error(err);
+    console.log("record inserted");
+    res.send({ status: "ok", error: "User Not Found" });
+  });
+});
+
+app.post("/expense", (req, res) => {
+  amount = req.body.amount;
+  reason = req.body.reason;
+  date = req.body.date;
+  category = req.body.category;
+  email = req.body.email;
+
+  var sql = `INSERT INTO transactions (amount,reason, date, created_at , updated_at, email,category ) VALUES ("${amount}", "${reason}", "${date}", NOW(),NOW(),"${email}", "${category}")`;
   db.query(sql, function (err, result) {
     if (err) console.error(err);
     console.log("record inserted");
@@ -73,7 +88,15 @@ app.post("/register", async (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.status.json({ status: "error", error: "User Not Found" });
+  res.send({ status: "error", error: "User Not Found" });
+});
+
+app.get("/transactions", (req, res) => {
+  var sql = `SELECT * FROM  transactions  `;
+  db.query(sql, function (err, result) {
+    if (err) console.error(err);
+    res.send(result);
+  });
 });
 
 app.listen(apiPort, () => {

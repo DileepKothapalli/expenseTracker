@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import Router from "next/router";
+
+import React, { useEffect, useState } from "react";
 import { Div, NavLinkDiv, NavLinks, NavLinksDiv } from "./SidebarElements";
 
 function Sidebar() {
@@ -14,6 +16,7 @@ function Sidebar() {
     console.log(document.cookie);
     Cookies.remove("token");
   }
+
   return (
     <Div>
       <NavLinksDiv>

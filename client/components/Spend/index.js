@@ -1,4 +1,6 @@
-import { useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
 import {
   Button,
   ButtonDiv,
@@ -21,19 +23,35 @@ const Spend = () => {
   const [reason, setReason] = useState("");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
-
+  const [email, setEmail] = useState(null);
+  useEffect(() => {
+    setEmail(Cookies.get("email"));
+  });
   function incomeColorHandler() {
     setcolor(0);
   }
   function expenseColorHandler() {
     setcolor(1);
   }
-  function expenseHandler(e) {
+  async function expenseHandler(e) {
     e.preventDefault();
     console.log(amount);
     console.log(reason);
     console.log(date);
     console.log(category);
+
+    const expense = await axios
+      .post("http://localhost:8080/expense", {
+        amount: amount,
+        reason: reason,
+        date: date,
+        category: category,
+        email: email,
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
     document.getElementById("income-expense-form").reset();
   }
   function incomeHandler(e) {
@@ -133,6 +151,7 @@ const Spend = () => {
               </IconDiv>
               <Input
                 placeholder="Date and Time"
+                type="date"
                 onChange={(event) => {
                   setDate(event.target.value);
                 }}

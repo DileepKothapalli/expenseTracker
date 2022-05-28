@@ -21,8 +21,9 @@ export const NavLinkDiv = styled.div`
   justify-content: center;
   margin: 10px;
   width: 140px;
-  padding: 5px 5px;
-  border: 1px solid #eee;
+  border-radius: 5px;
+  /* border: 1px solid #eee; */
+  /* padding: 5px 5px; */
   border-radius: 5px;
   :hover {
     transform: scale(1.05);
@@ -39,4 +40,9 @@ export const NavLinks = styled.a`
   font-family: "Playfair Display SC", serif;
   font-family: "Poppins", sans-serif;
   cursor: pointer;
+  width: 100%;
+  border: 1px solid #eee;
+  padding: 5px 5px;
+  border-radius: 5px;
+  text-align: center;
 `;

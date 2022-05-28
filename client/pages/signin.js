@@ -34,8 +34,7 @@ export default function SignIn() {
 
   async function loginHandler(e) {
     e.preventDefault();
-    console.log(loginemail);
-    console.log(loginpass);
+
     const data = {
       email: loginemail,
       password: loginpass,
@@ -50,10 +49,12 @@ export default function SignIn() {
       });
 
     let result = loginApi;
-    console.log(result);
-    if (result.data.success) {
+    console.log("hello,", result);
+    console.log("hello");
+    if (result && result.data.success) {
       console.log("first");
       Cookies.set("token", result.data.token);
+      Cookies.set("email", result.data.email);
       Router.push("/");
     } else {
       window.location.reload();
