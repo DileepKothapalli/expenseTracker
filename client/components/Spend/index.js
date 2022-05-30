@@ -213,7 +213,7 @@ const Spend = () => {
                   Save
                 </Button>
               ) : (
-                <Button color={color} onClick={incomeHandler}>
+                <Button color={color} type="submit">
                   Save
                 </Button>
               )}

@@ -83,6 +83,13 @@ app.post("/expense", (req, res) => {
   db.query(sql1, function (err, result) {
     if (err) console.error(err);
     if (result) console.log("found");
+    else {
+      var sql = `INSERT INTO category_master (category) VALUES ("${category}")`;
+      db.query(sql, function (err, result) {
+        if (err) console.error(err);
+        console.log("category added");
+      });
+    }
   });
 
   var sql = `INSERT INTO transactions (amount,reason, date, created_at , updated_at, email,category,flag ) VALUES ("${amount}", "${reason}", "${date}", NOW(),NOW(),"${email}", "${category}",1)`;
@@ -99,6 +106,19 @@ app.post("/income", (req, res) => {
   date = req.body.date;
   category = req.body.category;
   email = req.body.email;
+
+  var sql1 = `SELECT * FROM category_master WHERE category = "${category}"`;
+  db.query(sql1, function (err, result) {
+    if (err) console.error(err);
+    if (result) console.log("found");
+    else {
+      var sql = `INSERT INTO category_master (category) VALUES ("${category}")`;
+      db.query(sql, function (err, result) {
+        if (err) console.error(err);
+        console.log("category added");
+      });
+    }
+  });
 
   var sql = `INSERT INTO transactions (amount,reason, date, created_at , updated_at, email,category,flag ) VALUES ("${amount}", "${reason}", "${date}", NOW(),NOW(),"${email}", "${category}",0)`;
   db.query(sql, function (err, result) {

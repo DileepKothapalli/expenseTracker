@@ -39,6 +39,8 @@ import {
 } from "../styles/overviewElements";
 const dashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [expenseTotal, setExpenseTotal] = useState(0);
+  const [incomeTotal, setIncomeTotal] = useState(0);
   const [transaction_data, setTransaction_data] = useState();
 
   useEffect(() => {
@@ -49,37 +51,60 @@ const dashboard = () => {
           console.error("Error:", error);
         });
       setTransaction_data(transactions?.data);
+      const expenseAmount = 0;
+      const incomeAmount = 0;
+      transaction_data?.forEach((element) => {
+        if (element.flag) {
+          expenseAmount = expenseAmount + element.amount;
+        } else {
+          incomeAmount = incomeAmount + element.amount;
+        }
+        console.log(element.amount, element.flag);
+      });
+
+      setExpenseTotal(expenseAmount);
+      setIncomeTotal(incomeAmount);
     };
     transactionsHandler();
   }, [transaction_data]);
 
   function check() {
-    console.log(transaction_data);
+    const data = new Map();
+    transaction_data.forEach((element) => {
+      if (data.has(element.category)) {
+        data.set(element.category, data.get(element.category) + element.amount);
+      } else {
+        data.set(element.category, +element.amount);
+      }
+    });
+    console.log(data);
   }
+  // function check1() {}
   return (
     <Div>
       <Sidebar />
       <MainDiv>
         <MidDiv>
+          {/* <button onClick={check1}>check</button> */}
           <CategoriesDiv>
             <CategoryDiv>
               <CategoryInfoDiv>
-                <CategoryName>Food & Drinks</CategoryName>
-                <Amount>18256</Amount>
+                <CategoryName>Expenses</CategoryName>
+                <Amount>{expenseTotal}</Amount>
               </CategoryInfoDiv>
               <ImageDiv></ImageDiv>
             </CategoryDiv>
             <CategoryDiv>
               <CategoryInfoDiv>
-                <CategoryName>Bills & Payments</CategoryName>
-                <Amount>4630</Amount>
+                <CategoryName>Income</CategoryName>
+                <Amount>{incomeTotal}</Amount>
               </CategoryInfoDiv>
               <ImageDiv></ImageDiv>
             </CategoryDiv>
             <CategoryDiv>
               <CategoryInfoDiv>
-                <CategoryName>Entertainment</CategoryName>
-                <Amount>2367</Amount>
+                <CategoryName>Budget</CategoryName>
+                <Amount>10000</Amount>
               </CategoryInfoDiv>
               <ImageDiv></ImageDiv>
             </CategoryDiv>
@@ -102,8 +127,8 @@ const dashboard = () => {
               </TimeFrameButtonsDiv>
 
               <LegendDiv>
-                <Legend>Food & Drinks</Legend>
-                <Legend>Shopping</Legend>
+                <Legend>Expenses</Legend>
+                <Legend>Income</Legend>
               </LegendDiv>
             </TimeFrameDiv>
             <GraphDiv></GraphDiv>
@@ -127,7 +152,7 @@ const dashboard = () => {
                     <Date>{d.date.substring(2, 10)}</Date>
                   </InfoDiv>
                   <PriceDiv>
-                    <Price>₹ {d.amount}</Price>
+                    <Price color={d.flag}>₹ {d.amount}</Price>
                   </PriceDiv>
                   <Dot></Dot>
                 </TransactionDiv>

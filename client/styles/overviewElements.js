@@ -77,6 +77,7 @@ export const Price = styled.h1`
   font-size: 16px;
   margin: 0px;
   color: #d10a0a;
+  color: ${(props) => (props.color ? "#d10a0a" : "#0dca83")};
 `;
 export const CategoriesDiv = styled.div`
   display: flex;
