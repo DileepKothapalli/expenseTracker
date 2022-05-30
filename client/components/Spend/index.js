@@ -33,33 +33,38 @@ const Spend = () => {
   function expenseColorHandler() {
     setcolor(1);
   }
-  async function expenseHandler(e) {
+  async function submitHandler(e) {
     e.preventDefault();
     console.log(amount);
     console.log(reason);
     console.log(date);
     console.log(category);
 
-    const expense = await axios
-      .post("http://localhost:8080/expense", {
-        amount: amount,
-        reason: reason,
-        date: date,
-        category: category,
-        email: email,
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-
-    document.getElementById("income-expense-form").reset();
-  }
-  function incomeHandler(e) {
-    e.preventDefault();
-    console.log(amount);
-    console.log(reason);
-    console.log(date);
-    console.log(category);
+    if (color) {
+      const expense = await axios
+        .post("http://localhost:8080/expense", {
+          amount: amount,
+          reason: reason,
+          date: date,
+          category: category,
+          email: email,
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      const income = await axios
+        .post("http://localhost:8080/income", {
+          amount: amount,
+          reason: reason,
+          date: date,
+          category: category,
+          email: email,
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
     document.getElementById("income-expense-form").reset();
   }
 
@@ -77,7 +82,7 @@ const Spend = () => {
         </TopDiv>
 
         <MidDiv>
-          <form id="income-expense-form">
+          <form id="income-expense-form" onSubmit={submitHandler}>
             <InputDiv>
               <IconDiv>
                 <svg
@@ -96,6 +101,7 @@ const Spend = () => {
               </IconDiv>
               <Input
                 placeholder="Enter Amount"
+                required
                 onChange={(event) => {
                   setAmount(event.target.value);
                 }}
@@ -119,6 +125,7 @@ const Spend = () => {
               {color ? (
                 <Input
                   placeholder="What was this spend for?"
+                  required
                   onChange={(event) => {
                     setReason(event.target.value);
                   }}
@@ -126,6 +133,7 @@ const Spend = () => {
               ) : (
                 <Input
                   placeholder="Enter Remitter"
+                  required
                   onChange={(event) => {
                     setReason(event.target.value);
                   }}
@@ -151,6 +159,7 @@ const Spend = () => {
               </IconDiv>
               <Input
                 placeholder="Date and Time"
+                required
                 type="date"
                 onChange={(event) => {
                   setDate(event.target.value);
@@ -180,6 +189,7 @@ const Spend = () => {
               {color ? (
                 <Input
                   placeholder="Category"
+                  required
                   onChange={(event) => {
                     setCategory(event.target.value);
                   }}
@@ -187,6 +197,7 @@ const Spend = () => {
               ) : (
                 <Input
                   placeholder="Credit"
+                  required
                   onChange={(event) => {
                     setCategory(event.target.value);
                   }}
@@ -198,7 +209,7 @@ const Spend = () => {
               {/* <Button color={color}>SAVE & ADD ANOTHER </Button> */}
 
               {color ? (
-                <Button color={color} onClick={expenseHandler}>
+                <Button color={color} type="submit">
                   Save
                 </Button>
               ) : (

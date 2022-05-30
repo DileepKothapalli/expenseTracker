@@ -6,8 +6,8 @@ export const Div = styled.div`
   background: rgb(27, 231, 177);
   background: linear-gradient(
     90deg,
-    rgba(27, 231, 177, 1) 39.8%,
-    rgba(255, 255, 255, 1) 39.8%
+    rgba(27, 231, 177, 1) 40%,
+    rgba(255, 255, 255, 1) 40%
   );
   min-height: 90vh;
   justify-content: center;
@@ -26,8 +26,8 @@ export const LoginDiv = styled.div`
   background: rgb(27, 231, 177);
   background: linear-gradient(
     90deg,
-    rgba(27, 231, 177, 1) 37.45%,
-    rgba(255, 255, 255, 1) 37.45%
+    rgba(27, 231, 177, 1) 37.42%,
+    rgba(255, 255, 255, 1) 37.42%
   );
   min-height: 70vh;
   max-height: 70vh;
