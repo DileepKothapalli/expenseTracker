@@ -81,3 +81,20 @@ export const Icon = styled.img`
   height: 25px;
   width: auto;
 `;
+
+export const Img = styled.img`
+  height: 30px;
+  width: auto;
+  border-radius: 50%;
+`;
+
+export const DetailsDiv = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const Name = styled.p`
+  margin-right: ${(props) => props.marginRight};
+  margin-left: 10px;
+  font-size: 16px;
+`;

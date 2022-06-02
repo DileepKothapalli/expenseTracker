@@ -10,17 +10,20 @@ import {
   AddRecord,
   Icon,
   AddrecordDiv,
+  Img,
+  DetailsDiv,
+  Name,
 } from "./NavbarElements";
-import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+// import Cookies from "js-cookie";
+import { signIn, useSession } from "next-auth/react";
+// import { useEffect, useState } from "react";
 const Navbar = () => {
-  const [isCookie, setisCookie] = useState(null);
-  useEffect(() => {
-    setisCookie(Cookies.get("token"));
-  });
+  // const [isCookie, setisCookie] = useState(null);
+  // useEffect(() => {
+  //   setisCookie(Cookies.get("next-auth.session-token"));
+  // });
 
-  // const isCookie = Cookies.get("token");
-
+  const { data: session } = useSession();
   return (
     <Div>
       <Nav>
@@ -30,15 +33,22 @@ const Navbar = () => {
           </a>
         </LogoDiv>
         <NavLinksDiv>
-          {!isCookie && (
+          {!session && (
             <NavLinkDiv marginRight="140px">
-              <Link href="/signin">
-                <NavLinks>SignIn</NavLinks>
+              <Link href="api/auth/signin">
+                <NavLinks
+                  onClick={(e) => {
+                    e.preventDefault();
+                    signIn();
+                  }}
+                >
+                  SignIn
+                </NavLinks>
               </Link>
             </NavLinkDiv>
           )}
 
-          {isCookie && (
+          {session && (
             <NavLinkDiv marginRight="40px">
               <Link href="/">
                 <AddrecordDiv>
@@ -48,7 +58,12 @@ const Navbar = () => {
               </Link>
             </NavLinkDiv>
           )}
-          {isCookie && <NavLinkDiv marginRight="45px">Hi Dileep</NavLinkDiv>}
+          {session && (
+            <DetailsDiv>
+              <Img src={session.user.image} />
+              <Name marginRight="45px">{session.user.name}</Name>
+            </DetailsDiv>
+          )}
         </NavLinksDiv>
       </Nav>
     </Div>

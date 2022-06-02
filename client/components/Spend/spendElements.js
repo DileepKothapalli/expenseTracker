@@ -9,6 +9,15 @@ export const Div = styled.div`
   border-radius: 4px;
   margin: 20px 40px 20px 20px;
 `;
+export const Div1 = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: space-evenly;
+  background-color: #fff;
+  margin: 20px;
+  border-radius: 4px;
+  margin: 20px 40px 20px 20px;
+`;
 export const MainDiv = styled.div`
   display: flex;
   flex-direction: column;

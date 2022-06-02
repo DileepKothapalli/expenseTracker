@@ -1,3 +1,7 @@
+import axios from "axios";
+import { useSession } from "next-auth/react";
+// import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/SideBar";
 import {
   Amount,
@@ -35,66 +39,112 @@ import {
   TransactionDiv,
   TransactionsDiv,
 } from "../styles/expenseElements";
+
 const reports = () => {
+  const [transaction_data, setTransaction_data] = useState();
+  const [key, setKeys] = useState(null);
+  const [value, setValue] = useState(null);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const transactionsHandler = async () => {
+      const transactions = await axios
+        .get(`http://localhost:8080/transactions/${session.user.email}`)
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+      setTransaction_data(transactions?.data);
+
+      const data = new Map();
+      transaction_data?.forEach((element) => {
+        if (!element.flag) {
+          if (data.has(element.category)) {
+            data.set(
+              element.category,
+              data.get(element.category) + element.amount
+            );
+          } else {
+            data.set(element.category, +element.amount);
+          }
+        }
+      });
+
+      const keys = [...data.keys()];
+      const values = [...data.values()];
+
+      setKeys(keys);
+      setValue(values);
+    };
+
+    if (session) {
+      transactionsHandler();
+    }
+  }, [transaction_data]);
+
+  // const [isCookie, setisCookie] = useState(null);
+  // useEffect(() => {
+  //   setisCookie(Cookies.get("token"));
+  // });
+
   return (
     <Div>
       <Sidebar />
-      <MainDiv>
-        <MidDiv>
-          {/* <button onClick={check1}>check</button> */}
-          <CategoriesDiv>
-            <CategoryDiv>
-              <CategoryInfoDiv>
-                <CategoryName>Expenses</CategoryName>
-                <Amount>{}</Amount>
-              </CategoryInfoDiv>
-              <ImageDiv></ImageDiv>
-            </CategoryDiv>
-            <CategoryDiv>
-              <CategoryInfoDiv>
-                <CategoryName>Income</CategoryName>
-                <Amount>{}</Amount>
-              </CategoryInfoDiv>
-              <ImageDiv></ImageDiv>
-            </CategoryDiv>
-            <CategoryDiv>
-              <CategoryInfoDiv>
-                <CategoryName>Budget</CategoryName>
-                <Amount>10000</Amount>
-              </CategoryInfoDiv>
-              <ImageDiv></ImageDiv>
-            </CategoryDiv>
-          </CategoriesDiv>
-          <GraphWrapper>
-            <TimeFrameDiv>
-              <TimeFrameButtonsDiv>
-                <TimeFrameButtons>
-                  <ButtonText>1 Month</ButtonText>
-                </TimeFrameButtons>
-                <TimeFrameButtons>
-                  <ButtonText>3 Month</ButtonText>
-                </TimeFrameButtons>
-                <TimeFrameButtons>
-                  <ButtonText>6 Month</ButtonText>
-                </TimeFrameButtons>
-                <TimeFrameButtons>
-                  <ButtonText>1 Year</ButtonText>
-                </TimeFrameButtons>
-              </TimeFrameButtonsDiv>
+      {session && (
+        <MainDiv>
+          <MidDiv>
+            {/* <button onClick={check}>check</button> */}
+            <CategoriesDiv>
+              {(function () {
+                let rows = [];
+                for (let j = 0; j < 3; j++) {
+                  rows.push(
+                    <CategoryDiv key={j}>
+                      <CategoryInfoDiv>
+                        {key && (
+                          <>
+                            <CategoryName>{key[j]}</CategoryName>
+                            <Amount>{value[j]}</Amount>
+                          </>
+                        )}
+                      </CategoryInfoDiv>
+                      <ImageDiv></ImageDiv>
+                    </CategoryDiv>
+                  );
+                }
+                return rows;
+              })()}
+            </CategoriesDiv>
+            <GraphWrapper>
+              <TimeFrameDiv>
+                <TimeFrameButtonsDiv>
+                  <TimeFrameButtons>
+                    <ButtonText>1 Month</ButtonText>
+                  </TimeFrameButtons>
+                  <TimeFrameButtons>
+                    <ButtonText>3 Month</ButtonText>
+                  </TimeFrameButtons>
+                  <TimeFrameButtons>
+                    <ButtonText>6 Month</ButtonText>
+                  </TimeFrameButtons>
+                  <TimeFrameButtons>
+                    <ButtonText>1 Year</ButtonText>
+                  </TimeFrameButtons>
+                </TimeFrameButtonsDiv>
 
-              <LegendDiv>
-                <Legend>Expenses</Legend>
-                <Legend>Income</Legend>
-              </LegendDiv>
-            </TimeFrameDiv>
-            <GraphDiv></GraphDiv>
-            <MonthsDiv>
-              <Month></Month>
-            </MonthsDiv>
-          </GraphWrapper>
-        </MidDiv>
-        <EndDiv></EndDiv>
-      </MainDiv>
+                <LegendDiv>
+                  <Legend>Expenses</Legend>
+                  <Legend>Income</Legend>
+                </LegendDiv>
+              </TimeFrameDiv>
+              <GraphDiv></GraphDiv>
+              <MonthsDiv>
+                <Month></Month>
+              </MonthsDiv>
+            </GraphWrapper>
+          </MidDiv>
+          <EndDiv></EndDiv>
+        </MainDiv>
+      )}
     </Div>
   );
 };

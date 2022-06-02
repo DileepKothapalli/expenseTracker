@@ -1,21 +1,25 @@
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 import Link from "next/link";
 import Router from "next/router";
 
 import React, { useEffect, useState } from "react";
 import { Div, NavLinkDiv, NavLinks, NavLinksDiv } from "./SidebarElements";
 
+import { signOut, useSession } from "next-auth/react";
+
 function Sidebar() {
-  const [isCookie, setisCookie] = useState(null);
-  useEffect(() => {
-    setisCookie(Cookies.get("token"));
-  });
+  // const [isCookie, setisCookie] = useState(null);
+  // useEffect(() => {
+  //   setisCookie(Cookies.get("token"));
+  // });
 
   function handleOnClickLogout(e) {
     // setLogout(e);
-    console.log(document.cookie);
-    Cookies.remove("token");
+    // console.log(document.cookie);
+    // Cookies.remove("token");
+    // Cookies.remove("email");
   }
+  const { data: session } = useSession();
 
   return (
     <Div>
@@ -40,12 +44,10 @@ function Sidebar() {
             <NavLinks>Settings</NavLinks>
           </Link>
         </NavLinkDiv>
-        {isCookie && (
+        {session && (
           <NavLinkDiv>
             <Link href="">
-              <NavLinks onClick={(e) => handleOnClickLogout(e)}>
-                SignOut
-              </NavLinks>
+              <NavLinks onClick={() => signOut()}>SignOut</NavLinks>
             </Link>
           </NavLinkDiv>
         )}

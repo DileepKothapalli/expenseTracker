@@ -6,10 +6,10 @@ import { useState } from "react";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <>
+    <SessionProvider>
       <Navbar />
       <Component {...pageProps} />
-    </>
+    </SessionProvider>
   );
 }
 

@@ -9,13 +9,15 @@ import { useEffect, useState } from "react";
 import { Div } from "../styles/indexElements";
 export default function Home() {
   const [isCookie, setisCookie] = useState(null);
-  useEffect(() => {
-    setisCookie(Cookies.get("token"));
-  });
+  // useEffect(() => {
+  //   setisCookie(Cookies.get("token"));
+  // });
+  const { data: session } = useSession();
+
   return (
     <Div>
       <Sidebar />
-      {isCookie && <Spend />}
+      {session && <Spend />}
     </Div>
   );
 }

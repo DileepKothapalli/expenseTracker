@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
   Button,
@@ -17,16 +18,19 @@ import {
   TopDiv,
 } from "./spendElements";
 
-const Spend = () => {
+const Spend = (props) => {
   const [color, setcolor] = useState(1);
-  const [amount, setAmount] = useState("");
-  const [reason, setReason] = useState("");
-  const [date, setDate] = useState("");
-  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState(props.init_amount);
+  const [reason, setReason] = useState(props.reason);
+  const [date, setDate] = useState(props.date);
+  const [category, setCategory] = useState(props.category);
   const [email, setEmail] = useState(null);
-  useEffect(() => {
-    setEmail(Cookies.get("email"));
-  });
+  const { data: session } = useSession();
+
+  // useEffect(() => {
+  //   setEmail(Cookies.get("email"));
+  // }, [props.init_amount]);
+
   function incomeColorHandler() {
     setcolor(0);
   }
@@ -35,10 +39,6 @@ const Spend = () => {
   }
   async function submitHandler(e) {
     e.preventDefault();
-    console.log(amount);
-    console.log(reason);
-    console.log(date);
-    console.log(category);
 
     if (color) {
       const expense = await axios
@@ -47,7 +47,7 @@ const Spend = () => {
           reason: reason,
           date: date,
           category: category,
-          email: email,
+          email: session.user.email,
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -59,7 +59,7 @@ const Spend = () => {
           reason: reason,
           date: date,
           category: category,
-          email: email,
+          email: session.user.email,
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -132,7 +132,7 @@ const Spend = () => {
                 />
               ) : (
                 <Input
-                  placeholder="Enter Remitter"
+                  placeholder="Enter reason"
                   required
                   onChange={(event) => {
                     setReason(event.target.value);

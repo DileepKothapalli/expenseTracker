@@ -1,4 +1,7 @@
 import axios from "axios";
+import { useSession } from "next-auth/react";
+// import Cookies from "js-cookie";
+import Router from "next/router";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import {
@@ -41,12 +44,14 @@ const dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [expenseTotal, setExpenseTotal] = useState(0);
   const [incomeTotal, setIncomeTotal] = useState(0);
-  const [transaction_data, setTransaction_data] = useState();
+  const [transaction_data, setTransaction_data] = useState([]);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const transactionsHandler = async () => {
       const transactions = await axios
-        .get("http://localhost:8080/transactions")
+        .get(`http://localhost:8080/transactions/${session.user.email}`)
+
         .catch((error) => {
           console.error("Error:", error);
         });
@@ -59,110 +64,122 @@ const dashboard = () => {
         } else {
           incomeAmount = incomeAmount + element.amount;
         }
-        console.log(element.amount, element.flag);
       });
 
       setExpenseTotal(expenseAmount);
       setIncomeTotal(incomeAmount);
     };
-    transactionsHandler();
+    if (session) {
+      transactionsHandler();
+    }
   }, [transaction_data]);
 
-  function check() {
-    const data = new Map();
-    transaction_data.forEach((element) => {
-      if (data.has(element.category)) {
-        data.set(element.category, data.get(element.category) + element.amount);
-      } else {
-        data.set(element.category, +element.amount);
-      }
-    });
-    console.log(data);
+  function editHandler(id) {
+    Router.push(`/edit/${id}`);
   }
-  // function check1() {}
+  function deleteHandler(id) {
+    const DeleteIDHandler = async () => {
+      const transactions = await axios
+        .get(`http://localhost:8080/delete/${id}`)
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+      console.log(transactions);
+    };
+    DeleteIDHandler();
+  }
+
   return (
     <Div>
       <Sidebar />
-      <MainDiv>
-        <MidDiv>
-          {/* <button onClick={check1}>check</button> */}
-          <CategoriesDiv>
-            <CategoryDiv>
-              <CategoryInfoDiv>
-                <CategoryName>Expenses</CategoryName>
-                <Amount>{expenseTotal}</Amount>
-              </CategoryInfoDiv>
-              <ImageDiv></ImageDiv>
-            </CategoryDiv>
-            <CategoryDiv>
-              <CategoryInfoDiv>
-                <CategoryName>Income</CategoryName>
-                <Amount>{incomeTotal}</Amount>
-              </CategoryInfoDiv>
-              <ImageDiv></ImageDiv>
-            </CategoryDiv>
-            <CategoryDiv>
-              <CategoryInfoDiv>
-                <CategoryName>Budget</CategoryName>
-                <Amount>10000</Amount>
-              </CategoryInfoDiv>
-              <ImageDiv></ImageDiv>
-            </CategoryDiv>
-          </CategoriesDiv>
-          <GraphWrapper>
-            <TimeFrameDiv>
-              <TimeFrameButtonsDiv>
-                <TimeFrameButtons>
-                  <ButtonText>1 Month</ButtonText>
-                </TimeFrameButtons>
-                <TimeFrameButtons>
-                  <ButtonText>3 Month</ButtonText>
-                </TimeFrameButtons>
-                <TimeFrameButtons>
-                  <ButtonText>6 Month</ButtonText>
-                </TimeFrameButtons>
-                <TimeFrameButtons>
-                  <ButtonText>1 Year</ButtonText>
-                </TimeFrameButtons>
-              </TimeFrameButtonsDiv>
+      {session && (
+        <MainDiv>
+          <MidDiv>
+            <CategoriesDiv>
+              <CategoryDiv>
+                <CategoryInfoDiv>
+                  <CategoryName>Expenses</CategoryName>
+                  <Amount>{expenseTotal}</Amount>
+                </CategoryInfoDiv>
+                <ImageDiv></ImageDiv>
+              </CategoryDiv>
+              <CategoryDiv>
+                <CategoryInfoDiv>
+                  <CategoryName>Income</CategoryName>
+                  <Amount>{incomeTotal}</Amount>
+                </CategoryInfoDiv>
+                <ImageDiv></ImageDiv>
+              </CategoryDiv>
+              <CategoryDiv>
+                <CategoryInfoDiv>
+                  <CategoryName>Budget</CategoryName>
+                  <Amount>10000</Amount>
+                </CategoryInfoDiv>
+                <ImageDiv></ImageDiv>
+              </CategoryDiv>
+            </CategoriesDiv>
+            <GraphWrapper>
+              <TimeFrameDiv>
+                <TimeFrameButtonsDiv>
+                  <TimeFrameButtons>
+                    <ButtonText>1 Month</ButtonText>
+                  </TimeFrameButtons>
+                  <TimeFrameButtons>
+                    <ButtonText>3 Month</ButtonText>
+                  </TimeFrameButtons>
+                  <TimeFrameButtons>
+                    <ButtonText>6 Month</ButtonText>
+                  </TimeFrameButtons>
+                  <TimeFrameButtons>
+                    <ButtonText>1 Year</ButtonText>
+                  </TimeFrameButtons>
+                </TimeFrameButtonsDiv>
 
-              <LegendDiv>
-                <Legend>Expenses</Legend>
-                <Legend>Income</Legend>
-              </LegendDiv>
-            </TimeFrameDiv>
-            <GraphDiv></GraphDiv>
-            <MonthsDiv>
-              <Month></Month>
-            </MonthsDiv>
-          </GraphWrapper>
-        </MidDiv>
-        <EndDiv>
-          <TopDiv>
-            <Text>Transaction History</Text>
-          </TopDiv>
+                <LegendDiv>
+                  <Legend>Expenses</Legend>
+                  <Legend>Income</Legend>
+                </LegendDiv>
+              </TimeFrameDiv>
+              <GraphDiv></GraphDiv>
+              <MonthsDiv>
+                <Month></Month>
+              </MonthsDiv>
+            </GraphWrapper>
+          </MidDiv>
+          <EndDiv>
+            <TopDiv>
+              <Text>Transaction History</Text>
+            </TopDiv>
 
-          {transaction_data?.map(function (d, idx) {
-            return (
-              <div>
-                <TransactionDiv key={idx}>
-                  <IconDiv></IconDiv>
-                  <InfoDiv>
-                    <Name>{d.reason}</Name>
-                    <Date>{d.date.substring(2, 10)}</Date>
-                  </InfoDiv>
-                  <PriceDiv>
-                    <Price color={d.flag}>₹ {d.amount}</Price>
-                  </PriceDiv>
-                  <Dot></Dot>
-                </TransactionDiv>
-              </div>
-            );
-          })}
+            {transaction_data?.map(function (d, idx) {
+              return (
+                <div key={idx}>
+                  <TransactionDiv>
+                    <IconDiv></IconDiv>
+                    <InfoDiv>
+                      <Name>{d.reason}</Name>
+                      <Date>{d.date.substring(2, 10)}</Date>
+                    </InfoDiv>
+                    <PriceDiv>
+                      <Price color={d.flag}>₹ {d.amount}</Price>
+                    </PriceDiv>
+                    <Dot>
+                      <button onClick={() => editHandler(d.transactions_id)}>
+                        e
+                      </button>
+                      <button onClick={() => deleteHandler(d.transactions_id)}>
+                        d
+                      </button>
+                    </Dot>
+                  </TransactionDiv>
+                </div>
+              );
+            })}
 
-          <TransactionsDiv></TransactionsDiv>
-        </EndDiv>
-      </MainDiv>
+            <TransactionsDiv></TransactionsDiv>
+          </EndDiv>
+        </MainDiv>
+      )}
     </Div>
   );
 };
