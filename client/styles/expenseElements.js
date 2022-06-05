@@ -107,6 +107,10 @@ export const Amount = styled.p`
 export const CategoryName = styled.p`
   margin: 0px 0px 10px 0px;
   white-space: nowrap;
+  text-transform: capitalize;
+  font-weight: 500;
+  font-size: 18px;
+  color: black;
 `;
 export const ImageDiv = styled.div`
   display: flex;

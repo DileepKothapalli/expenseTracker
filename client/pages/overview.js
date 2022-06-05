@@ -72,7 +72,7 @@ const dashboard = () => {
     if (session) {
       transactionsHandler();
     }
-  }, [transaction_data]);
+  });
 
   function editHandler(id) {
     Router.push(`/edit/${id}`);

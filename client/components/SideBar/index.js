@@ -11,7 +11,7 @@ function Sidebar() {
   // const [isCookie, setisCookie] = useState(null);
   // useEffect(() => {
   //   setisCookie(Cookies.get("token"));
-  // });
+  // });  
 
   function handleOnClickLogout(e) {
     // setLogout(e);
