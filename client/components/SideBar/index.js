@@ -11,7 +11,7 @@ function Sidebar() {
   // const [isCookie, setisCookie] = useState(null);
   // useEffect(() => {
   //   setisCookie(Cookies.get("token"));
-  // });  
+  // });
 
   function handleOnClickLogout(e) {
     // setLogout(e);
@@ -40,8 +40,8 @@ function Sidebar() {
           </Link>
         </NavLinkDiv>
         <NavLinkDiv>
-          <Link href="/settings">
-            <NavLinks>Settings</NavLinks>
+          <Link href="/groups">
+            <NavLinks>Groups</NavLinks>
           </Link>
         </NavLinkDiv>
         {session && (

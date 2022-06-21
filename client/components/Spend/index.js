@@ -27,9 +27,9 @@ const Spend = (props) => {
   const [email, setEmail] = useState(null);
   const { data: session } = useSession();
 
-  // useEffect(() => {
-  //   setEmail(Cookies.get("email"));
-  // }, [props.init_amount]);
+  useEffect(() => {
+    setEmail(Cookies.get("email"));
+  }, [props.init_amount]);
 
   function incomeColorHandler() {
     setcolor(0);

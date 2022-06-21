@@ -91,49 +91,50 @@ const expenses = () => {
       },
     },
   };
+  const { data: session } = useSession();
 
   useEffect(() => {
-    const transactionsHandler = async () => {
-      const transactions = await axios
-        .get(`http://localhost:8080/transactions/${session.user.email}`)
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-      setTransaction_data(transactions?.data);
-
-      const data = new Map();
-      transaction_data?.forEach((element) => {
-        if (element.flag) {
-          if (data.has(element.category)) {
-            data.set(
-              element.category,
-              data.get(element.category) + element.amount
-            );
-          } else {
-            data.set(element.category, +element.amount);
-          }
-        }
-      }),
-        [transaction_data];
-
-      const keys = [...data.keys()];
-      const values = [...data.values()];
-
-      setKeys(keys);
-      setValue(values);
-    };
     if (session) {
+      const transactionsHandler = async () => {
+        const transactions = await axios
+          .get(`http://localhost:8080/transactions/${session.user.email}`)
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+
+        setTransaction_data(transactions.data);
+      };
+
       transactionsHandler();
     }
-  });
+  }, [session]);
+
+  useEffect(() => {
+    const data = new Map();
+    transaction_data.forEach((element) => {
+      if (element.flag) {
+        if (data.has(element.category)) {
+          data.set(
+            element.category,
+            data.get(element.category) + element.amount
+          );
+        } else {
+          data.set(element.category, +element.amount);
+        }
+      }
+    });
+
+    const keys = [...data.keys()];
+    const values = [...data.values()];
+    setKeys(keys);
+    setValue(values);
+  }, [transaction_data]);
 
   useEffect(() => {
     if (!document.cookie) {
       Router.push("/");
     }
   }, []);
-
-  const { data: session } = useSession();
 
   return (
     <Div>

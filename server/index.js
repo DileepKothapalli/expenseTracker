@@ -168,7 +168,6 @@ app.post("/update/:id", (req, res) => {
   flag = req.body.flag;
   category = req.body.category;
   email = req.body.email;
-  // var sql = `UPDATE transactions SET (amount,reason, date , updated_at,category,flag ) VALUES ("${amount}", "${reason}", "${date}",NOW(), "${category}",1) WHERE transactions_id = ${req.params.id} `;
   var sql = `UPDATE transactions SET amount = ?,reason= ? , date=?,updated_at=NOW(),  category =? ,flag=?  WHERE transactions_id=${req.params.id}`;
   db.query(sql, [amount, reason, date, category, flag], function (err, result) {
     if (err) console.error(err);
