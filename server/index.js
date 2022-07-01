@@ -144,6 +144,30 @@ app.get("/transactions/:email", (req, res) => {
   });
 });
 
+app.get("/groupsdata", (req, res) => {
+  var sql = `SELECT * FROM  groups_info`;
+  db.query(sql, function (err, result) {
+    if (err) console.error(err);
+    if (result) {
+      res.send(result);
+    } else {
+      res.send([]);
+    }
+  });
+});
+
+app.get("/groupmembers/:groupname", (req, res) => {
+  var sql = `SELECT * FROM  groups_info WHERE group_name = "${req.params.groupname}"`;
+  db.query(sql, function (err, result) {
+    if (err) console.error(err);
+    if (result) {
+      res.send(result);
+    } else {
+      res.send([]);
+    }
+  });
+});
+
 app.get("/edit/:id", (req, res) => {
   var sql = `SELECT * FROM  transactions WHERE transactions_id = ${req.params.id} `;
   db.query(sql, function (err, result) {
@@ -173,6 +197,18 @@ app.post("/update/:id", (req, res) => {
     if (err) console.error(err);
     console.log(result);
     res.send(result);
+  });
+});
+
+app.post("/addgroup", (req, res) => {
+  group_name = req.body.group_name;
+  creator_name = req.body.creator_name;
+
+  var sql = `INSERT INTO groups_info (group_member_email,group_name,  created_at , updated_at ) VALUES ("${creator_name}", "${group_name}",  NOW(),NOW())`;
+  db.query(sql, function (err, result) {
+    if (err) console.error(err);
+    console.log("record inserted");
+    res.send({ status: "ok", error: "User Not Found" });
   });
 });
 

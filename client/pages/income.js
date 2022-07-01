@@ -100,32 +100,35 @@ const reports = () => {
           console.error("Error:", error);
         });
       setTransaction_data(transactions?.data);
-
-      const data = new Map();
-      transaction_data?.forEach((element) => {
-        if (!element.flag) {
-          if (data.has(element.category)) {
-            data.set(
-              element.category,
-              data.get(element.category) + element.amount
-            );
-          } else {
-            data.set(element.category, +element.amount);
-          }
-        }
-      });
-
-      const keys = [...data.keys()];
-      const values = [...data.values()];
-
-      setKeys(keys);
-      setValue(values);
     };
 
     if (session) {
       transactionsHandler();
     }
-  });
+  }, [session]);
+
+  useEffect(() => {
+    const data = new Map();
+    transaction_data?.forEach((element) => {
+      if (!element.flag) {
+        if (data.has(element.category)) {
+          data.set(
+            element.category,
+            data.get(element.category) + element.amount
+          );
+        } else {
+          data.set(element.category, +element.amount);
+        }
+      }
+    });
+    console.log("first");
+
+    const keys = [...data.keys()];
+    const values = [...data.values()];
+
+    setKeys(keys);
+    setValue(values);
+  }, [transaction_data]);
 
   // const [isCookie, setisCookie] = useState(null);
   // useEffect(() => {

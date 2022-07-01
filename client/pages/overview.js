@@ -56,23 +56,26 @@ const dashboard = () => {
           console.error("Error:", error);
         });
       setTransaction_data(transactions?.data);
-      const expenseAmount = 0;
-      const incomeAmount = 0;
-      transaction_data?.forEach((element) => {
-        if (element.flag) {
-          expenseAmount = expenseAmount + element.amount;
-        } else {
-          incomeAmount = incomeAmount + element.amount;
-        }
-      });
-
-      setExpenseTotal(expenseAmount);
-      setIncomeTotal(incomeAmount);
     };
     if (session) {
       transactionsHandler();
     }
-  });
+  }, [session]);
+
+  useEffect(() => {
+    const expenseAmount = 0;
+    const incomeAmount = 0;
+    transaction_data?.forEach((element) => {
+      if (element.flag) {
+        expenseAmount = expenseAmount + element.amount;
+      } else {
+        incomeAmount = incomeAmount + element.amount;
+      }
+    });
+    setExpenseTotal(expenseAmount);
+    setIncomeTotal(incomeAmount);
+    console.log("first");
+  }, [transaction_data]);
 
   function editHandler(id) {
     Router.push(`/edit/${id}`);

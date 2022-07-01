@@ -101,6 +101,7 @@ const expenses = () => {
           .catch((error) => {
             console.error("Error:", error);
           });
+        console.log("first");
 
         setTransaction_data(transactions.data);
       };
